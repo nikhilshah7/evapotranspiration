@@ -1,0 +1,219 @@
+---
+title: "Calculating evapotranspiration"
+format: pdf
+editor: visual
+---
+
+## Objectives
+
+In this data lab, students will gain practice in applying functions, visualizing data, and interpreting the outputs while working with water fluxes at two timescales.
+
+## Background
+
+We will first use the Thornthwaite method to calculate potential evapotranspiration ($E_p$), which relies on two key assumptions. First, potential evapotranspiration assumes that net radiation is equivalent to latent heat:
+
+$$R_n \approx \lambda E $$
+
+In Thornthwaite's time, net radiation was not commonly measured, so his empirical approach uses mean monthly air temperature (MMAT) as a proxy. Thus, we can only obtain Thornthwaite $E_p$ at the monthly scale as well.
+
+We will introduce learn how to interpret the Budyko curve (see slides), then use the fitted Budyko relationship to estimate $E$. Finally, we will plot the monthly values from two contrasting sites to see how water and energy limitation vary seasonally.
+
+In our second approach, we will use daily, plant-level sapflux data and invert a simplified form of Penman-Monteith to obtain surface conductance for nine species. Surface conductance of plant canopies vary widely between species and over time, with implications for plant carbon uptake.  
+
+## Part I: Budyko curves at NEON sites
+
+[NEON](https://www.neonscience.org/) is a federally funded network of ecological observatories that endeavor to provide harmonized, continental-scale ecological data to improve understanding of the earth system. We will be calculating monthly $E_p$ and $E$ to plot a Budyko curve for two contrasting sites.
+
+First, use the NEON [site explorer tool](https://www.neonscience.org/field-sites/explore-field-sites) to select two sites with contrasting vegetation and climate, includeing one you suspect is water-limited and one you suspect is energy-limited. Note their 4 letter codes here.
+
+Then, read in the 'PRISM_env_NEON.csv' with the tidyverse package. These climate variables are 30-year normals from 1981-2010 that I extracted from a gridded [PRISM product](https://prism.oregonstate.edu/). Please see the companion script 'get_PRISM_data.R' for further details.
+
+```{r}
+#| output: FALSE
+library(tidyverse)
+
+raw <- read_csv("")
+```
+
+Many tidyverse functions exist for selecting, filtering, and otherwise manipulating data. These functions can be strung together using a pipe operator, or \|\>.
+
+Modify the code below to reflect the two sites you have chosen. Site names and other character strings need to be enclosed in double quotes. 
+
+```{r}
+env <- raw |>
+  filter(field_site_id %in% c())
+
+View(env)
+```
+
+Next, examine the data to see what is present. What units are in the `value` column? How many types of `var` are included?
+
+We need to use the `var` of 'tmean' to calculate Thornthwaite $E_p$. Examine equations 10.1-10.3 from the Bonan text. How many variables do we need for this calculation?
+
+The package 'SPEI' has a thornthwaite() function. Install this package (first time only), load the library, and type `?thornthwaite` into your console to see the documentation.
+
+```{r}
+# install.packages("SPEI")
+library(SPEI)
+```
+
+What are the inputs needed by thornthwaite()? How do these inputs map onto the variables in 10.1-10.3?
+
+Now, let's isolate the variable `tmean` (equivalent to MMAT or Tave) to calculate Thornthwaite's $E_p$. Write some code to divide the dataframe into one for each variable.
+
+```{r}
+temp <- env |>
+  filter(var == )
+
+ppt <- 
+```
+
+Because we have two sites, we need to use group_by() in order to calculate $E_p$ separately for each site.
+
+```{r}
+#| warning: false
+Ep <- temp |>
+  group_by(field_site_id) |>
+  reframe(Ep_thorn = thornthwaite(Tave = value,
+                                 lat = unique(lat))) |>
+  # Add the months back in
+  mutate(month = rep(1:12, 2)) |> 
+  # Join ppt back in
+  left_join(ppt, by = join_by(field_site_id, month)) |> 
+  # Tidy up
+  rename(ppt_mm = value) |>
+  select(-temp, -var) |>
+  relocate(Ep_thorn, .after = ppt_mm)
+```
+
+Examine the output of this code chunk to ensure that it looks correct. 
+
+Next, we will program the Budyko curve function given by 12.6 in the Bonan text. First, re-write the 12.6 in terms of $E_p$.
+
+I have provided an empty R function below. Please populate it with your rewritten version. It can be easier to break up complicated functions into components, if only to reduce errors in parentheses.
+
+```{r}
+budyko <- function(Ep, ppt) { # these are the two input variable names
+  part1 <- 
+  part2 <- 
+  part3 <- 
+  
+  E <- 
+  
+  return(E)
+  
+}
+```
+
+Test the function in your console to assure yourself that it works. Choose reasonable values for Ep and ppt. The output $E$ should always be less than ppt.
+
+If you are reasonably sure that this function is working correctly, then the next step is to apply it across the dataframe. We will use mutate() to generate a new column.
+
+```{r}
+Ep <- Ep |>
+  mutate(E_budyko = )
+```
+
+Let's check that our calculations are correct by plotting them. Use your knowledge of ggplot() to start a simple scatterplot of $E/P$ vs. $E_p/P$, and color each site differently. Note that you can perform calculations within the x and y arguments of aes().
+
+```{r}
+ggplot() +
+  geom_point()
+```
+
+To enhance your interpretation of the plots, use facet_wrap() to arrange one site per panel and two rows. Represent each month by and use scale_color_gradient2() to select a 3-point color ramp. Add a vertical line at 1 to denote the energy- and water-limitations. Finally, add theme_bw().
+
+```{r}
+ggplot) +
+  geom_point() +
+  scale_color_gradient2(low = "blue", mid = "forestgreen", high = "coral",
+                       midpoint = 6) +
+  theme_bw(base_size = 14)
+```
+
+Finally, let's visualize the same data as a time series of $E_p/P$. Create another figure wherein month is on the x-axis, $E_p/P$ is on the axis, and the two sites are different colors. Add a line representing the division between energy- and water-limitation.
+
+```{r}
+ggplot() +
+  geom_point() +
+  theme_bw(base_size = 14)
+```
+
+### Check your understanding (written response required)
+
+Using both figures and any additional code necessary, address the following question. Refer to the Budyko figure as Fig. 1 and the time series plot as Fig. 2. Read the site descriptions from [NEON](https://www.neonscience.org/field-sites/explore-field-sites) for additional insight, and cite as needed.
+
+What are the limitations to evapotranspiration at each site, and in which months do they occur? On average, were your sites energy- and water- limited as you expected based on site climatatology and vegetation? 
+
+Finally, how might climate change factors such as drought and proposed interventions such as [solar geoengineering](https://www.ucsusa.org/resources/what-solar-geoengineering) impact evapotranspiration and therefore plant carbon uptake? Consider differences in water vs. energy limitation among sites and seasons in your answer. 
+
+## Part II: Inverting simplified Penman model
+
+From class, recall that plant representation in the Penman-Monteith model of evapotranspiration was limited to the $g_w$ term, or surface conductance to water. At the whole-plant scale, we can estimate transpiration via sap flow methods, and then use a simplified version of the Monteith model ([Monteith & Unsworth 1990 Chapter 13](https://ccl.on.worldcat.org/search/detail/701704007?sortKey=LIBRARY&queryString=kw%3Amonteith%20unsworth&scope=)) that a assumes a canopy well-coupled with the bulk air.
+
+First, rearrange equation 13.42 (reproduced below) to isolate $g_s$. Recall that resistance is the inverse of conductance, so $r_s$ = $1/g_s$, and rewrite until the constants (Greek letters and $c_p$) are separated from the state variables of $E$ and $D$, or vapor pressure deficit.
+
+![](Monteith_13.42.png){fig-align="center"}
+
+Let's use values of $\gamma = 0.0559\:kPa\:K^{-1}$, $\lambda=2300\: J\:g^{-1}$, $\rho=1020\:g\:m^{-3}$, and $c_p=0.00119\:J\:g^{-1}\:K^{-1}$. What are the units of the constants portion of your rearranged Monteith equation?
+
+Create an R function to estimate canopy surface conductance $g_s$ from $E$ and $D$. 
+
+```{r}
+gs_monteith <- function(E, D){ # only inputs needed are the 2 state variables
+  # declare constants
+
+  
+  # write rearranged Monteith equation
+  gs <- 
+  return(gs)
+}
+```
+
+We will be working with a [dataset](https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2435.14066) of sapflow from riparian trees near Salt Late City, Utah. Sapflow techniques involve inserting a pair of heating and sensing probes into the active sapwood (where the xylem is) of a tree, then using the principles of heat conduction and approximations of tree geometry to estimate the flow rate of water within the sapwood (one representation of transpiration). In this case, we going to use tree-level sapflux density as $E, \:g\:m^{-2}\:s^{-1}$ and bulk air vapor pressure deficit $D,\:kPa$. 
+
+We are going to load in the "riparian_sapflow.csv". The customary abbreviation for sapflux density is $J_s$, and this dataset includes the mean daily sum of $J_s$ for 9 species at 4 sites as well as the associated mean $D$. 
+
+Use the function you created above to create a new column called `Gs`. 
+
+```{r}
+Js <-read_csv("riparian_sapflow.csv") |>
+  mutate(species = factor(species, levels = c("P. fremontii", "T. ramosissima", "E. angustifolia",
+                                              "P. hybrid", "S. hybrid",
+                                              "A. negundo", 
+                                              "A. grandidentatum", "B. occidentalis", "P. angustifolia")),
+         site = factor(site, levels = c("Jordan", "Reservoir", "Todds", "Upper")))
+
+Js <- Js |>
+  mutate(Gs = )
+```
+
+Because I did not include the scaling factors from sapwood area to leaf area, the final units here are non-standard, but the trends over time and inter-species comparison can still be analyzed. Plot the trend in `Gs` over time, faceting over the species and coloring the points by site. The sites are listed in elevation order from Jordan to Upper. 
+
+```{r}
+ggplot() + 
+  geom_point()
+```
+One of the species has much higher `Gs` than the others, owing to much higher $J_s$. Try remaking the plot with the argument 'scale = "free_y"' within facet_wrap(). What does this do?
+
+```{r}
+ggplot() +
+  geom_point()
+```
+
+Finally, you can also use the filter() function within ggplot() to remove E. angustifolia, which allows for easier comparison among the remaining species. 
+
+```{r}
+ggplot() +
+  geom_point()
+```
+
+### Check your understanding (written response required)
+
+In this study, all trees could access groundwater such that their transpiration rate $J_s$ is largely controlled by atmospheric demand $D$ and species differences. The $D$ also differs as the site are arrayed along an elevation gradient from Jordan (1314 m) to Upper (1900 m). 
+
+(i) Generally, $D$ decreases with elevation due to the adiabatic rate of cooling. What is projected to happen to $D$ under climate change? Explain your reasoning. 
+
+(ii) Excluding E. angustifolia, is there an elevational pattern in `Gs` across species? Why might this be so? Refer to your rearranged Monteith equation. What  might happen to `Gs` across elevations under climate change?
+
+(iii) Both T. ramosissima and E. angustifolia are non-native species (more commonly known as tamarix and Russian olive). What are their `Gs` relative to the other native riparian trees? How might water use by non-native species play out ecologically under climate change, given the coupling between water use and CO~2~ uptake?
