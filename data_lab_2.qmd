@@ -121,7 +121,7 @@ ggplot() +
   geom_point()
 ```
 
-To enhance your interpretation of the plots, use facet_wrap() to arrange one site per panel and two rows. Represent each month by and use scale_color_gradient2() to select a 3-point color ramp. Add a vertical line at 1 to denote the energy- and water-limitations. Finally, add theme_bw().
+To enhance your interpretation of the plots, use facet_wrap() to arrange one site per panel and two rows. Represent each month by color and use scale_color_gradient2() to select a 3-point color ramp. Add a vertical line at 1 to denote the energy- and water-limitations. Finally, add theme_bw().
 
 ```{r}
 ggplot) +
@@ -213,7 +213,7 @@ ggplot() +
 
 In this study, all trees could access groundwater such that their transpiration rate $J_s$ is largely controlled by atmospheric demand $D$ and species differences. The $D$ also differs as the site are arrayed along an elevation gradient from Jordan (1314 m) to Upper (1900 m).
 
-(i) Generally, $D$ decreases with elevation due to the adiabatic rate of cooling. What is projected to happen to $D$ under climate change? Explain your reasoning.
+(i) Generally, $D$ decreases with elevation due to the adiabatic rate of cooling (see page 94 in Bonan Chp 6). What is projected to happen to $D$ under climate change? Explain your reasoning.
 
 (ii) Excluding E. angustifolia, is there an elevational pattern in `Gs` across species? Why might this be so? Refer to your rearranged Monteith equation. What might happen to `Gs` across elevations under climate change?
 
