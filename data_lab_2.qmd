@@ -46,7 +46,7 @@ env <- raw |>
 View(env)
 ```
 
-Next, examine the data to see what is present. What units are in the `value` column? How many types of `var` are included?
+Next, examine the data to see what is present. How many types of `var` are included, and units do you infer in the `value` column?
 
 We need to use the `var` of 'tmean' to calculate Thornthwaite $E_p$. Examine equations 10.1-10.3 from the Bonan text. How many variables do we need for this calculation?
 
@@ -143,9 +143,9 @@ ggplot() +
 
 Using both figures and any additional code necessary, address the following question. Refer to the Budyko figure as Fig. 1 and the time series plot as Fig. 2. Read the site descriptions from [NEON](https://www.neonscience.org/field-sites/explore-field-sites) for additional insight, and cite as needed.
 
-What are the limitations to evapotranspiration at each site, and in which months do they occur? On average, were your sites energy- and water- limited as you expected based on site climatatology and vegetation?
+(i) For each site, what are the limitations to evapotranspiration and in which months do they occur? On average, were your sites energy- and water- limited as you expected based on site climatatology and vegetation?
 
-Finally, how might climate change factors such as drought and proposed interventions such as [solar geoengineering](https://www.ucsusa.org/resources/what-solar-geoengineering) impact evapotranspiration and therefore plant carbon uptake? Consider differences in water vs. energy limitation among sites and seasons in your answer.
+(ii)  How might climate change factors such as drought and proposed interventions such as [solar geoengineering](https://www.ucsusa.org/resources/what-solar-geoengineering) impact evapotranspiration and therefore plant carbon uptake? Consider differences in water vs. energy limitation among sites and seasons in your answer.
 
 ## Part II: Inverting simplified Penman model
 
@@ -155,7 +155,7 @@ First, rearrange equation 13.42 (reproduced below) to isolate $g_s$. Recall that
 
 ![](Monteith_13.42.png){fig-align="center"}
 
-Let's use values of $\gamma = 0.0559\:kPa\:K^{-1}$, $\lambda=2300\: J\:g^{-1}$, $\rho=1020\:g\:m^{-3}$, and $c_p=0.00119\:J\:g^{-1}\:K^{-1}$. What are the units of the constants portion of your rearranged Monteith equation?
+Let's use values of $\gamma = 0.0559\:kPa\:K^{-1}$, $\lambda=2300\: J\:g^{-1}$, $\rho=1020\:g\:m^{-3}$, and $c_p=0.00119\:J\:g^{-1}\:K^{-1}$.
 
 Create an R function to estimate canopy surface conductance $g_s$ from $E$ and $D$.
 
@@ -211,10 +211,12 @@ ggplot() +
 
 ### Check your understanding (written response required)
 
-In this study, all trees could access groundwater such that their transpiration rate $J_s$ is largely controlled by atmospheric demand $D$ and species differences. The $D$ also differs as the site are arrayed along an elevation gradient from Jordan (1314 m) to Upper (1900 m).
+In this study, all trees could access groundwater such that their transpiration rate $J_s$ is largely controlled by atmospheric demand $D$ and species differences. The $D$ also differs as the sites are arrayed along an elevation gradient from Jordan (1314 m) to Upper (1900 m).
 
-(i) Generally, $D$ decreases with elevation due to the adiabatic rate of cooling (see page 94 in Bonan Chp 6). What is projected to happen to $D$ under climate change? Explain your reasoning.
+(i) 
 
-(ii) Excluding E. angustifolia, is there an elevational pattern in `Gs` across species? Why might this be so? Refer to your rearranged Monteith equation. What might happen to `Gs` across elevations under climate change?
+    (i) Generally, $D$ decreases with elevation due to the adiabatic rate of cooling. What might the elevation pattern of $D$ look like under climate change? Explain your reasoning.
 
-(iii) Both T. ramosissima and E. angustifolia are non-native species (more commonly known as tamarix and Russian olive). What are their `Gs` relative to the other native riparian trees? How might water use by non-native species play out ecologically under climate change, given the coupling between water use and CO~2~ uptake?
+    (ii) Excluding *E. angustifolia*, is there an elevational pattern in `Gs` across species? Why might this be so? Refer to your rearranged Monteith equation. What might happen to `Gs` across elevations under climate change?
+
+    (iii) Both *T. ramosissima* and *E. angustifolia* are non-native species (more commonly known as tamarix and Russian olive). What are their `Gs` relative to the other native riparian trees? How might water use by non-native species play out ecologically under climate change, given the tradeoff between water use and CO~2~ uptake?
