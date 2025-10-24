@@ -53,7 +53,7 @@ Modify the code below to reflect the two sites you have chosen. Site names and o
 env <- raw |>
   filter(field_site_id %in% c('MOAB', 'TOMB'))
 
-View(env)
+#View(env)
 ```
 
 ### Q1d (0 points)
